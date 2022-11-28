@@ -19,24 +19,25 @@ class _SignUpState extends State<SignUp> {
   TextEditingController pass = TextEditingController();
 
   Future register() async {
-    var url = Uri.http("192.168.0.105", '/login/register.php', {'q': '{http}'});
+    var url = Uri.http(
+        "185.176.43.104", '/login_flutter/register.php', {'q': '{http}'});
     var response = await http.post(url, body: {
       "username": user.text.toString(),
       "password": pass.text.toString(),
     });
     var data = json.decode(response.body);
-    if (data == "Error") {
+    if (data.status == 2) {
       Fluttertoast.showToast(
         backgroundColor: Colors.orange,
         textColor: Colors.white,
-        msg: 'User already exit!',
+        msg: data.message.toString(),
         toastLength: Toast.LENGTH_SHORT,
       );
     } else {
       Fluttertoast.showToast(
         backgroundColor: Colors.green,
         textColor: Colors.white,
-        msg: 'Registration Successful',
+        msg: data.message.toString(),
         toastLength: Toast.LENGTH_SHORT,
       );
       Navigator.push(
@@ -63,7 +64,7 @@ class _SignUpState extends State<SignUp> {
           ),
         ),
         const Text(
-          "Nilen Patel Inc.",
+          "Login Flutter",
           style: TextStyle(
             fontSize: 36,
             fontWeight: FontWeight.bold,

@@ -14,15 +14,16 @@ class _LoginPageState extends State<Login> {
   TextEditingController user = TextEditingController();
   TextEditingController pass = TextEditingController();
   Future login() async {
-    var url = Uri.http("192.168.0.105", '/login/login.php', {'q': '{http}'});
+    var url =
+        Uri.http("185.176.43.104", '/login_flutter/login.php', {'q': '{http}'});
     var response = await http.post(url, body: {
       "username": user.text,
       "password": pass.text,
     });
     var data = json.decode(response.body);
-    if (data.toString() == "Success") {
+    if (data.status == 1) {
       Fluttertoast.showToast(
-        msg: 'Login Successful',
+        msg: data.message.toString(),
         backgroundColor: Colors.green,
         textColor: Colors.white,
         toastLength: Toast.LENGTH_SHORT,
@@ -37,7 +38,7 @@ class _LoginPageState extends State<Login> {
       Fluttertoast.showToast(
         backgroundColor: Colors.red,
         textColor: Colors.white,
-        msg: 'Username and password invalid',
+        msg: data.message.toString(),
         toastLength: Toast.LENGTH_SHORT,
       );
     }
@@ -58,7 +59,7 @@ class _LoginPageState extends State<Login> {
           ),
         ),
         const Text(
-          "Nilen Patel Inc.",
+          "Login Flutter",
           style: TextStyle(
             fontSize: 36,
             fontWeight: FontWeight.bold,
@@ -82,7 +83,7 @@ class _LoginPageState extends State<Login> {
           controller: user,
           style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
-            hintText: 'Email / Username',
+            hintText: 'Username',
             hintStyle: const TextStyle(
               fontSize: 16,
               color: Colors.white,
