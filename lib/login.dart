@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'Dashboard.dart';
+import 'dart:convert' as convert;
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -14,32 +15,42 @@ class _LoginPageState extends State<Login> {
   TextEditingController user = TextEditingController();
   TextEditingController pass = TextEditingController();
   Future login() async {
-    var url =
-        Uri.http("185.176.43.104", '/login_flutter/login.php', {'q': '{http}'});
-    var response = await http.post(url, body: {
-      "username": user.text,
-      "password": pass.text,
-    });
-    var data = json.decode(response.body);
-    if (data.status == 1) {
-      Fluttertoast.showToast(
-        msg: data.message.toString(),
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-        toastLength: Toast.LENGTH_SHORT,
-      );
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const DashBoard(),
-        ),
-      );
+    if (user.text.toString().isNotEmpty && pass.text.toString().isNotEmpty) {
+      var url =
+      Uri.http("hzisin.000webhostapp.com", '/login_flutter/login.php', {'q': '{http}'});
+      var response = await http.post(url, body: {
+        "username": user.text,
+        "password": pass.text,
+      });
+      var data = convert.jsonDecode(response.body) as Map<String, dynamic>;
+
+      if (data['status'] == 1) {
+        Fluttertoast.showToast(
+          msg: data['message'] + " Hola! " + user.text,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          toastLength: Toast.LENGTH_SHORT,
+        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const DashBoard(),
+          ),
+        );
+      } else {
+        Fluttertoast.showToast(
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          msg: data['message'],
+          toastLength: Toast.LENGTH_SHORT,
+        );
+      }
     } else {
       Fluttertoast.showToast(
-        backgroundColor: Colors.red,
+        msg: "Debes ingresar tus credenciales para iniciar sesion",
+        backgroundColor: Colors.blue,
         textColor: Colors.white,
-        msg: data.message.toString(),
-        toastLength: Toast.LENGTH_SHORT,
+        toastLength: Toast.LENGTH_LONG,
       );
     }
   }
@@ -163,15 +174,6 @@ class _LoginPageState extends State<Login> {
         ),
         const SizedBox(
           height: 16,
-        ),
-        const Text(
-          "FORGOT PASSWORD?",
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF1C1C1C),
-            height: 1,
-          ),
         ),
       ],
     );

@@ -1,11 +1,12 @@
 <?php
-$db = mysqli_connect('fdb30.awardspace.net', '4207008_ejemplo', '13ax7Hj[7esa2.Vi', '4207008_ejemplo');
+$db = mysqli_connect('localhost', 'id19929314_root', '=dT7Jm_VpOide(oj', 'id19929314_login_flutter');
 
 $response = new stdClass();
 
 if (!$db) {
     $response->status = 0;
     $response->message = "Database connection failed";
+    header('Content-Type: application/json; charset=utf-8');
     echo json_encode($response);
 } else {
     $username = $_POST['username'];
@@ -16,10 +17,12 @@ if (!$db) {
     if ($count == 1) {
         $response->status = 1;
         $response->message = "Accion con exito";
+        header('Content-Type: application/json; charset=utf-8');
         echo json_encode($response);
     } else {
         $response->status = 2;
         $response->message = "Oops! hubo un error";
+        header('Content-Type: application/json; charset=utf-8');
         echo json_encode($response);
     }
 }

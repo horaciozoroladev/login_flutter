@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert' as convert;
 
 import 'Dashboard.dart';
 
@@ -19,32 +19,42 @@ class _SignUpState extends State<SignUp> {
   TextEditingController pass = TextEditingController();
 
   Future register() async {
-    var url = Uri.http(
-        "185.176.43.104", '/login_flutter/register.php', {'q': '{http}'});
-    var response = await http.post(url, body: {
-      "username": user.text.toString(),
-      "password": pass.text.toString(),
-    });
-    var data = json.decode(response.body);
-    if (data.status == 2) {
-      Fluttertoast.showToast(
-        backgroundColor: Colors.orange,
-        textColor: Colors.white,
-        msg: data.message.toString(),
-        toastLength: Toast.LENGTH_SHORT,
-      );
+    if (user.text.toString().isNotEmpty && pass.text.toString().isNotEmpty) {
+      var url = Uri.http(
+          "hzisin.000webhostapp.com", '/login_flutter/register.php', {'q': '{http}'});
+      var response = await http.post(url, body: {
+        "username": user.text.toString(),
+        "password": pass.text.toString(),
+      });
+      var data = convert.jsonDecode(response.body) as Map<String, dynamic>;
+
+      if (data['status'] == 2) {
+        Fluttertoast.showToast(
+          backgroundColor: Colors.orange,
+          textColor: Colors.white,
+          msg: data['message'],
+          toastLength: Toast.LENGTH_SHORT,
+        );
+      } else {
+        Fluttertoast.showToast(
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          msg: data['message'] + " \nHola! " + user.text,
+          toastLength: Toast.LENGTH_SHORT,
+        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const DashBoard(),
+          ),
+        );
+      }
     } else {
       Fluttertoast.showToast(
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.blue,
         textColor: Colors.white,
-        msg: data.message.toString(),
-        toastLength: Toast.LENGTH_SHORT,
-      );
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const DashBoard(),
-        ),
+        msg: "Debes ingresar tu username y password",
+        toastLength: Toast.LENGTH_LONG,
       );
     }
   }
@@ -80,7 +90,7 @@ class _SignUpState extends State<SignUp> {
           style: const TextStyle(color: Colors.white),
           controller: user,
           decoration: InputDecoration(
-            hintText: 'Enter Email / Username',
+            hintText: 'Enter Username',
             hintStyle: const TextStyle(
               fontSize: 16,
               color: Colors.white70,
@@ -161,36 +171,9 @@ class _SignUpState extends State<SignUp> {
         const SizedBox(
           height: 24,
         ),
-        const Text(
-          "Or Signup with",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 16,
-            color: Color(0xFFF3D657),
-            height: 1,
-          ),
-        ),
         const SizedBox(
           height: 16,
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const <Widget>[
-            Icon(
-              Entypo.facebook_with_circle,
-              size: 32,
-              color: Color(0xFFF3D657),
-            ),
-            SizedBox(
-              width: 24,
-            ),
-            Icon(
-              Entypo.google__with_circle,
-              size: 32,
-              color: Color(0xFFF3D657),
-            ),
-          ],
-        )
       ],
     );
   }
